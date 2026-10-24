@@ -1,0 +1,409 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+:root {
+    --board: #c7ae84;
+    --board-dot: rgba(90, 70, 40, 0.28);
+    --card: #f8f3e8;
+    --card-edge: #e6dcc6;
+    --ink: #2b2620;
+    --ink-soft: #746a5b;
+    --ink-faint: #a89a80;
+    --rust: #a73b2a;
+    --teal: #3e6e63;
+    --ochre: #b98a2e;
+    --indigo: #46516e;
+    --paper-shadow: rgba(43, 38, 32, 0.28);
+}
+
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: var(--board);
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--ink);
+    overscroll-behavior: none;
+}
+
+#board {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    cursor: grab;
+    touch-action: none;
+    background-color: var(--board);
+    background-image: radial-gradient(var(--board-dot) 1.3px, transparent 1.3px);
+    background-repeat: repeat;
+}
+#board.panning {
+    cursor: grabbing;
+}
+
+#world {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 6000px;
+    height: 4000px;
+    transform-origin: 0 0;
+}
+
+/* ---- card ---- */
+.card {
+    display: block;
+    position: absolute;
+    margin: 0;
+    width: 220px;
+    min-height: 150px;
+    background: var(--card);
+    border: 1px solid var(--card-edge);
+    border-radius: 3px;
+    padding: 22px 14px 14px;
+    box-shadow: 0 10px 18px -6px var(--paper-shadow), 0 2px 4px rgba(43, 38, 32, 0.15);
+    transform: rotate(var(--rot, 0deg));
+    cursor: grab;
+    touch-action: none;
+    user-select: none;
+    opacity: 0;
+    animation: drop-in 0.5s cubic-bezier(.2, .8, .3, 1) forwards;
+    animation-delay: var(--delay, 0s);
+}
+.card.dragging {
+    cursor: grabbing;
+    box-shadow: 0 22px 30px -8px var(--paper-shadow), 0 4px 8px rgba(43, 38, 32, 0.2);
+    z-index: 50;
+    transition: none;
+}
+
+@keyframes drop-in {
+    from {
+        opacity: 0;
+        transform: rotate(var(--rot, 0deg)) translateY(-10px) scale(0.96);
+    }
+    to {
+        opacity: 1;
+        transform: rotate(var(--rot, 0deg)) translateY(0) scale(1);
+    }
+}
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    40% {
+        transform: scale(1.35);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.pin {
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #ffffff88, var(--pin-color, var(--rust)) 60%);
+    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.35);
+}
+
+.card-top {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin-bottom: 6px;
+    padding-right: 46px;
+}
+.dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--pin-color, var(--rust));
+    flex: none;
+}
+.card-title {
+    display: block;
+    width: 100%;
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 1.25;
+    outline: none;
+    flex: 1;
+    cursor: text;
+    touch-action: manipulation;
+    background: transparent;
+    border: none;
+    margin: 0;
+    resize: none;
+    padding: 0;
+    color: var(--ink);
+}
+.card-title::placeholder {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    color: var(--ink-faint);
+    opacity: 1;
+}
+.card-title[readonly] {
+    cursor: default;
+}
+.card-body {
+    display: block;
+    width: 100%;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    line-height: 1.55;
+    color: var(--ink-soft);
+    outline: none;
+    min-height: 42px;
+    cursor: text;
+    touch-action: manipulation;
+    background: transparent;
+    border: none;
+    margin: 0;
+    padding: 0;
+    resize: none;
+    overflow: hidden;
+}
+.card-body::placeholder {
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--ink-faint);
+    opacity: 1;
+}
+.card-body[readonly] {
+    cursor: default;
+}
+.accession {
+    position: absolute;
+    bottom: 8px;
+    right: 10px;
+    font-size: 9.5px;
+    letter-spacing: 0.03em;
+    color: var(--ink-faint);
+}
+
+.card-actions {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    display: flex;
+    align-items: center;
+    gap: 1px;
+    z-index: 2;
+}
+.icon-btn {
+    width: 26px;
+    height: 26px;
+    border: none;
+    background: transparent;
+    color: var(--ink-faint);
+    cursor: pointer;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.15s, background 0.15s;
+    touch-action: manipulation;
+}
+.icon-btn:hover {
+    background: rgba(43, 38, 32, 0.06);
+}
+.icon-btn svg {
+    width: 13px;
+    height: 13px;
+    fill: currentColor;
+}
+.save-btn {
+    color: var(--rust);
+}
+.save-btn.is-saved {
+    color: var(--teal);
+}
+.save-btn.is-error {
+    color: #c0392b;
+}
+.save-btn.pulse svg {
+    animation: pulse 0.35s ease;
+}
+.save-btn.saving {
+    opacity: 0.5;
+    pointer-events: none;
+}
+.delete-btn:hover {
+    color: var(--rust);
+}
+.delete-btn svg {
+    width: 12px;
+    height: 12px;
+}
+
+.hidden {
+    display: none;
+}
+
+.home-link {
+    color: #2b2620;
+    opacity: 0.7;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+/* ---- toolbar ---- */
+#toolbar {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    z-index: 100;
+    background: rgba(248, 243, 232, 0.92);
+    backdrop-filter: blur(6px);
+    border: 1px solid var(--card-edge);
+    border-radius: 6px;
+    padding: 12px 16px;
+    box-shadow: 0 8px 20px rgba(43, 38, 32, 0.18);
+    max-width: min(300px, calc(100vw - 28px));
+}
+#toolbar h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 700;
+    font-size: 17px;
+    margin: 0 0 2px;
+    color: var(--ink);
+}
+#toolbar .eyebrow {
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--teal);
+    margin: 0 0 10px;
+}
+.toolbar-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+}
+.btn {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    background: var(--ink);
+    color: var(--card);
+    border: none;
+    border-radius: 4px;
+    padding: 7px 11px;
+    cursor: pointer;
+    transition: transform 0.1s, background 0.15s;
+    touch-action: manipulation;
+}
+.btn:hover {
+    background: var(--rust);
+}
+.btn:active {
+    transform: scale(0.95);
+}
+.btn.icon {
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+}
+.zoom-level {
+    font-size: 11px;
+    color: var(--ink-soft);
+    min-width: 38px;
+    text-align: center;
+}
+.btn:focus-visible, .icon-btn:focus-visible {
+    outline: 2px solid var(--teal);
+    outline-offset: 2px;
+}
+#toolbar .hint {
+    font-size: 10.5px;
+    color: var(--ink-faint);
+    line-height: 1.5;
+    margin: 4px 0 0;
+}
+
+/* ---- coordinate stamp ---- */
+#stamp {
+    position: absolute;
+    bottom: 14px;
+    right: 14px;
+    z-index: 100;
+    background: rgba(248, 243, 232, 0.92);
+    border: 1px solid var(--card-edge);
+    border-radius: 4px;
+    padding: 6px 12px;
+    font-size: 11px;
+    color: var(--ink-soft);
+    box-shadow: 0 4px 10px rgba(43, 38, 32, 0.15);
+    letter-spacing: 0.02em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .card {
+        animation: none;
+        opacity: 1;
+    }
+    .save-btn.pulse svg {
+        animation: none;
+    }
+}
+
+@media (max-width: 560px) {
+    #toolbar {
+        padding: 9px 11px;
+        top: 10px;
+        left: 10px;
+    }
+    #toolbar h1 {
+        font-size: 14px;
+    }
+    #toolbar .eyebrow {
+        font-size: 9px;
+        margin-bottom: 7px;
+    }
+    #toolbar .hint {
+        display: none;
+    }
+    .toolbar-row {
+        margin-bottom: 0;
+    }
+    .btn {
+        padding: 6px 9px;
+        font-size: 11px;
+    }
+    .card {
+        width: 180px;
+        min-height: 130px;
+        padding: 20px 11px 11px;
+    }
+    .card-title {
+        font-size: 14.5px;
+    }
+    .card-body {
+        font-size: 11.5px;
+    }
+    #stamp {
+        font-size: 10px;
+        padding: 5px 9px;
+        bottom: 10px;
+        right: 10px;
+    }
+    .icon-btn {
+        width: 28px;
+        height: 28px;
+    }
+}

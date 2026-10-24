@@ -1,0 +1,52 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "d87a660505422e89a7ab634fc601e899",
+    "packages": [
+        {
+            "name": "davidleonstr/indura",
+            "version": "dev-main",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/davidleonstr/indura.git",
+                "reference": "29d2f2ca59c868c2522ba17d558c84222ec3a92d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/davidleonstr/indura/zipball/29d2f2ca59c868c2522ba17d558c84222ec3a92d",
+                "reference": "29d2f2ca59c868c2522ba17d558c84222ec3a92d",
+                "shasum": ""
+            },
+            "default-branch": true,
+            "bin": [
+                "bin/indura"
+            ],
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "indura\\": "src/"
+                }
+            },
+            "description": "A set of PHP lightweight utilities similar to a microframework",
+            "support": {
+                "source": "https://github.com/davidleonstr/indura/tree/main",
+                "issues": "https://github.com/davidleonstr/indura/issues"
+            },
+            "time": "2026-07-23T18:31:08+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "dev",
+    "stability-flags": {
+        "davidleonstr/indura": 20
+    },
+    "prefer-stable": true,
+    "prefer-lowest": false,
+    "platform": {},
+    "platform-dev": {},
+    "plugin-api-version": "2.9.0"
+}

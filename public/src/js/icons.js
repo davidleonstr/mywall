@@ -1,0 +1,2 @@
+export const SAVEICON = '<svg viewBox="0 0 24 24"><path d="M17 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7l-4-4zM12 19a3 3 0 1 1 0-6 3 3 0 0 1 0 6zM15 8H6V5h9v3z"/></svg>';
+export const DELETEICON = '<svg viewBox="0 0 24 24"><path d="M6 7h12l-1 13H7L6 7zm3-4h6l1 2H8l1-2zM4 7h16" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg>';

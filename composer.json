@@ -1,0 +1,14 @@
+{
+    "name": "david/mywall",
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/davidleonstr/indura"
+        }
+    ],
+    "require": {
+        "davidleonstr/indura": "dev-main"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
